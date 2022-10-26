@@ -23,20 +23,62 @@ logging.set_verbosity_error()
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ckpt-dir", type=Path, required=True)
-    parser.add_argument("--average-top-k", type=int, default=None)
-    parser.add_argument("--save-dir", type=Path, required=True)
-    parser.add_argument("--batch-size", type=int, default=1)
-    parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument(
+        "--ckpt-dir",
+        type=Path,
+        required=True,
+        help="directory contains checkpoint (.ckpt) files",
+    )
+    parser.add_argument(
+        "--average-top-k",
+        type=int,
+        default=None,
+        help="number of checkpoints to compute checkpoint average weights",
+    )
+    parser.add_argument("--save-dir", type=Path, required=True, help="path to output directory")
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=1,
+        help="min-batch size (batch-size=1 is only available when evaluation)",
+    )
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        default=0,
+        help="number of workers for dataloader (0 is enough)",
+    )
 
     # dataset
-    parser.add_argument("--corpus", default="RSTDT", choices=["RSTDT", "InstrDT"])
-    parser.add_argument("--data-dir", type=Path, default="data/")
-    parser.add_argument("--train-file", type=Path, default="train.json")
-    parser.add_argument("--valid-file", type=Path, default="valid.json")
-    parser.add_argument("--test-file", type=Path, default="test.json")
+    parser.add_argument(
+        "--corpus",
+        default="RSTDT",
+        choices=["RSTDT", "InstrDT"],
+        help="corpus type (label set is in src/data/dataset.py)",
+    )
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default="data/",
+        help="dataset directory which contain train/valid/test json files",
+    )
+    parser.add_argument(
+        "--train-file",
+        type=Path,
+        default="train.json",
+        help="file name of training dataset",
+    )
+    parser.add_argument(
+        "--valid-file",
+        type=Path,
+        default="valid.json",
+        help="file name of valiation file",
+    )
+    parser.add_argument(
+        "--test-file", type=Path, default="test.json", help="file name of test dataset"
+    )
     config = parser.parse_args()
-    device = torch.device("cuda:0")
+    device = torch.device("cuda:0")  # hard codded
     # device = torch.device('cpu')
 
     # load dataset
