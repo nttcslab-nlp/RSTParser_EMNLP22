@@ -11,7 +11,7 @@ from transformers import logging
 from average_ckpt import average_checkpoints
 from data.datamodule import DataModule
 from data.tree import AttachTree
-from metrics import RSTParseval
+from metrics import RSTParseval, OriginalParseval
 from models.classifier import Classifiers
 from models.parser import Parsers
 
@@ -81,6 +81,14 @@ def get_config():
     parser.add_argument(
         "--test-file", type=Path, default="test.json", help="file name of test dataset"
     )
+    # metrics
+    parser.add_argument(
+        "--metrics",
+        type=str,
+        default="RSTParseval",
+        choices=["RSTParseval", "OriginalParseval"],
+        help="metrics type to report results",
+    )
     args = parser.parse_args()
     return args
 
@@ -101,7 +109,8 @@ def main():
 def test_single_checkpoint(config, device, dataset):
     ckpt_path = config.ckpt_path
     save_dir = config.save_dir
-    test(ckpt_path, dataset, save_dir, device)
+    metrics_type = config.metrics
+    test(ckpt_path, dataset, save_dir, device, metrics_type)
     print("trees of given model are seved into {}".format(save_dir))
     return
 
@@ -120,6 +129,8 @@ def test_multiple_checkpoints(config, device, dataset):
             continue
         ckpt_path_list.append(ckpt_path)
 
+    metrics_type = config.metrics
+
     # evaluate each checkpoint
     scores = []
     for ckpt_path in ckpt_path_list:
@@ -127,7 +138,7 @@ def test_multiple_checkpoints(config, device, dataset):
         # ckpt_path: hoge/fuga/epoch=n-step=m.ckpt
         model_name = ckpt_path.stem
         save_dir = config.save_dir / model_name
-        valid_score = test(ckpt_path, dataset, save_dir, device)
+        valid_score = test(ckpt_path, dataset, save_dir, device, metrics_type)
         scores.append({"path": ckpt_path, "score": valid_score})
 
     sorted_scores = sorted(scores, reverse=True, key=lambda x: x["score"]["RSTParseval-F"])
@@ -139,7 +150,7 @@ def test_multiple_checkpoints(config, device, dataset):
     print("the best model was saved as {}".format(config.ckpt_dir / "best.ckpt"))
     save_dir = config.save_dir / "best"
     print("evaluate the best model")
-    test(best_ckpt_path, dataset, save_dir, device)
+    test(best_ckpt_path, dataset, save_dir, device, metrics_type)
     print("trees of the best model are seved into {}".format(save_dir))
 
     # select top_k models with the validation score
@@ -155,7 +166,7 @@ def test_multiple_checkpoints(config, device, dataset):
 
     print("evaluate the averaged model")
     save_dir = config.save_dir / "average"
-    test(avg_ckpt_path, dataset, save_dir, device)
+    test(avg_ckpt_path, dataset, save_dir, device, metrics_type)
     print("trees of the averaged model are seved into {}".format(save_dir))
 
     return
@@ -166,6 +177,7 @@ def test(
     dataset: DataModule,
     save_dir: Path,
     device: torch.device,
+    metrics_type: str,
 ):
     # load params from checkpoint
     if isinstance(ckpt_path, Path):
@@ -192,7 +204,10 @@ def test(
     test_set = dataset.test_dataloader()
     valid_set = dataset.val_dataloader()[0]
 
-    metric = RSTParseval()
+    metric = {
+        "RSTParseval": RSTParseval(),
+        "OriginalParseval": OriginalParseval(),
+    }[metrics_type]
     with torch.no_grad():
         output = parser.parse_dataset(valid_set)
         metric.update(output["pred_tree"], output["gold_tree"])
