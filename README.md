@@ -34,8 +34,46 @@ the parsing performance through our analysis within intra- and multi-sentential 
    ```
 
 ## Preprocess for dataset
+### RSTDT
+If you have the RSTDT dataset that has been preprocessed
+by [Heilman's script](https://github.com/EducationalTestingService/rstfinder.git),
+you can use it without doing anything.
+
+Each data of Heilman's has following elements.
+```
+- doc_id
+- edu_start_indices
+- edu_starts_paragraph
+- edu_strings
+- path_basename         # not necessary
+- pos_tags              # not necessary
+- rst_tree
+- syntax_trees          # not necessary
+- token_tree_positions  # not necessary
+- tokens
+```
+
+
+### Instr-DT
+The instr-DT dataset contains data that has multiple trees for one document.
+We treat those data by combining the multiple trees into single tree
+with the "Nucleus-Nucleus" and "topic-change?" labels.
 ```bash
-TBU
+cd data/instrdt
+git clone https://github.com/EducationalTestingService/rstfinder.git
+rm rstfinder/rstfinder/__init__.py  # this requires zpar package
+ln -nfs $PWD/rstfinder/rstfinder/ tools/
+
+python tools/preprocess.py \
+    --input-dir PATH/TO/instr-discourse-data/discourse_annotation/ \
+    --output-file all.json \
+    --joint-with-nn
+for tgt in train valid test; do
+    python tools/extract.py \
+        --src all.json \
+        --tgt ${tgt}.json \
+        --ids ${tgt}_ids.txt
+done
 ```
 
 
