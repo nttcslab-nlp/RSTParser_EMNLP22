@@ -1,0 +1,6 @@
+nltk
+spacy>=3.0.0,<4.0.0
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.4.0/en_core_web_sm-3.4.0-py3-none-any.whl
+torchmetrics==0.8.2
+pytorch-lightning == 1.6.3
+transformers >= 4.19.2
