@@ -21,12 +21,16 @@ logging.set_verbosity_warning()
 logging.set_verbosity_error()
 
 
-def main():
+def get_config():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--ckpt-path",
+        type=Path,
+        help="checkpoint (.ckpt) file",
+    )
     parser.add_argument(
         "--ckpt-dir",
         type=Path,
-        required=True,
         help="directory contains checkpoint (.ckpt) files",
     )
     parser.add_argument(
@@ -77,13 +81,32 @@ def main():
     parser.add_argument(
         "--test-file", type=Path, default="test.json", help="file name of test dataset"
     )
-    config = parser.parse_args()
-    device = torch.device("cuda:0")  # hard codded
-    # device = torch.device('cpu')
+    args = parser.parse_args()
+    return args
 
-    # load dataset
+
+def main():
+    config = get_config()
+    device = torch.device("cuda:0")  # hard codded
     dataset = DataModule.from_config(config, parser=None)
 
+    if config.ckpt_path:
+        test_single_checkpoint(config, device, dataset)
+    elif config.ckpt_dir:
+        test_multiple_checkpoints(config, device, dataset)
+
+    return
+
+
+def test_single_checkpoint(config, device, dataset):
+    ckpt_path = config.ckpt_path
+    save_dir = config.save_dir
+    test(ckpt_path, dataset, save_dir, device)
+    print("trees of given model are seved into {}".format(save_dir))
+    return
+
+
+def test_multiple_checkpoints(config, device, dataset):
     # ckpt list
     ckpt_path_list = []
     for ckpt_path in config.ckpt_dir.iterdir():
