@@ -119,8 +119,8 @@ These are results evaluated by OriginalParseval.
 
 |Model       |LM     |CPA|Span |Nuc. |Rel. |Ful. |ckpt|
 |------------|-------|:-:|----:|----:|----:|----:|----|
-|Shift-Reduce|DeBERTa|   | 77.0| 67.2| 57.5| 55.5| URL|
-|Shift-Reduce|DeBERTa| x | 78.3| 69.0| 58.2| 56.2| URL|
+|Shift-Reduce|DeBERTa|   | 77.0| 67.2| 57.5| 55.5| [Google Drive](https://drive.google.com/file/d/14CPKfvaGolg5Kd0smBpb2B4un3ZBaJgQ/view?usp=share_link)|
+|Shift-Reduce|DeBERTa| x | 78.3| 69.0| 58.2| 56.2| [Google Drive](https://drive.google.com/file/d/1Xt63FI-VfovyjtobM6K5oTBsDq_14SI-/view?usp=share_link)|
 
 
 ## Reference
