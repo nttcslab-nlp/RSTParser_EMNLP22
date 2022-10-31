@@ -1,0 +1,24 @@
+[
+    {
+        "doc_id": "wsj_xxxx",
+        "path_basename": "wsj_xxxx.out.edus",
+        "tokens":[
+            ["John", "Smith", ",", "director", "of", "the", "ABC", "company", ",", "was", "named", "CEO", "of", "XYZ", "company", "."],
+            ["John", "succeeds", "Thomas", "Brown", ",", "who", "is", "retiring", "as", "CEO", ",", "but", "will", "continue", "as", "a", "director", "of", "the", "ABC", "company", "."]
+        ],
+        "edu_strings":[
+            "John Smith, director of the ABC company, was named CEO of XYZ company.",
+            "John succeeds Thomas Brown,",
+            "who is retiring as CEO,",
+            "but will continue as a director of the ABC company."
+        ],
+        "edu_start_indices":[
+            [0, 0, 0],
+            [1, 0, 1],
+            [1, 5, 2],
+            [1, 11, 3]
+        ],
+        "rst_tree": "(ROOT (nucleus:span (text 0)) (satellite:circumstance (nucleus:span (text 1)) (satellite:elaboration-additional-e (satellite:concession (text 2)) (nucleus:span (text 3)))))",
+        "edu_starts_paragraph": [true, false, false, false]
+    }
+]

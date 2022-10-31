@@ -53,6 +53,8 @@ Each data of Heilman's has following elements.
 - tokens
 ```
 
+There is a sample at `data/rstdt/sample.json`
+
 
 ### Instr-DT
 The instr-DT dataset contains data that has multiple trees for one document.
